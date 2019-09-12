@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Clock</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <div class="container">
+
+        <div class="face">
+            <div class="hand" id="hour-hand"></div>
+            <div class="hand" id="min-hand"></div>
+            <div class="hand" id="sec-hand"></div>
+            <div id="hub"></div>
+        </div>
+
+        <div id="dig-clock"></div>
+        <button id="alarm">* Set Alarm * </button>
+
+    </div>
+
+    
+    <div id="modal">
+        <label for="appt">Set the alarm time:</label>
+
+        <input type="time" id="alarm-time" name="alarm-time" required>
+
+        <input type="submit" id="set-alarm">
+    </div>
+
+<audio id="audio" src="pipe.wav"></audio>
+
+<script>
+
+const secHand = document.getElementById(`sec-hand`);
+const minHand = document.getElementById(`min-hand`);
+const hourHand = document.getElementById(`hour-hand`);
+const digClock = document.getElementById(`dig-clock`);
+const alarmButton = document.getElementById(`alarm`);
+const alarmTime = document.getElementById(`alarm-time`);
+const modal = document.getElementById(`modal`);
+const setAlarmButton = document.getElementById(`set-alarm`);
+const audio = document.getElementById(`audio`);
+
+let wakeTimes = [{H: 0, M: 0}];
+alarmButton.addEventListener('click', _ => {
+    modal.style.display = `block`;
+});
+
+alarmTime.addEventListener('input', ev => {
+    ev.preventDefault();
+    let wt = {H: Number(alarmTime.value.slice(0,2)), M: Number(alarmTime.value.slice(3,5))};
+    wakeTimes.push(wt);
+    console.log(`${alarmTime.value} ********** ${wt}`);
+});
+
+setAlarmButton.addEventListener('click', _ => {
+    modal.style.display = `none`;
+});
+
+function setTime() {
+    const now = new Date();
+
+    let secs = now.getSeconds();
+    let mins = now.getMinutes();
+    let hours = now.getHours();
+
+    const hourStr = `${hours < 10 ? `0` : ``}${hours}`;
+    const minStr = `${mins < 10 ? `0` : ``}${mins}`;
+    const secStr = `${secs < 10 ? `0` : ``}${secs}`;
+    
+    // if (hours == wakeTime.H && mins == wakeTime.M) {
+    if (wakeTimes.some(t => t.H == hours && t.M == mins)) {
+        console.log(`About to play audio...`);
+        audio.play();
+    }
+
+    const secDegrees = secs * 6 + 90;
+    const minDegrees = mins * 6 + 90;
+    const hourDegrees = (hours + mins / 60) * 30 + 90;
+    if (secs == 59) secHand.style.transition = ``;
+    else if (secs == 1) secHand.style.transition = `all 0.1s`;
+
+    digClock.innerText = (`${hourStr}:${minStr}:${secStr}`);
+    secHand.style.transform = `rotate(${secDegrees}deg`;
+    minHand.style.transform = `rotate(${minDegrees}deg`;
+    hourHand.style.transform = `rotate(${hourDegrees}deg`;
+}
+
+setInterval(setTime, 1000);
+</script>
+
+</body>
+</html>
