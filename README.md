@@ -6,3 +6,4 @@ Playing around with a clock - based on Wes Bos's Javascript 30 Tutorial
 https://teraspora.github.io/js-clock-experiment/
 
 (according to Github, though currently getting a 404)
+...Now working (after 5 minutes)
